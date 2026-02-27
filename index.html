@@ -13,29 +13,29 @@
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     
-    /* Espaçamentos do Banner */
+    /* Espaçamentos do Banner - "Pula uma linha" antes e depois */
     #banner-topo { 
       width: 100%; display: none; 
-      padding-top: 15px; 
-      padding-bottom: 25px; 
+      padding-top: 20px; 
+      padding-bottom: 20px; 
       text-align: center;
     }
-    #banner-topo img { width: 90%; max-width: 600px; height: auto; border-radius: 10px; }
+    #banner-topo img { width: 92%; max-width: 600px; height: auto; border-radius: 10px; }
 
-    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 15px 0; border-bottom: 2px solid #ffcc00; }
-    .title { font-weight: bold; font-size: 20px; text-transform: uppercase; margin: 0; }
+    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 12px 0; border-bottom: 2px solid #ffcc00; }
+    .title { font-weight: bold; font-size: 19px; text-transform: uppercase; margin: 0; }
     
-    /* Swiper */
-    .swiper { width: 100%; height: 500px; background: #001a33; margin-top: 10px; }
+    /* Swiper (Carrossel) */
+    .swiper { width: 100%; height: 480px; background: #001a33; margin-top: 5px; }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
-    .card { border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #333; display: block; position: relative; }
-    .card img, .card video { height: 420px; width: auto; max-width: 95vw; display: block; object-fit: contain; }
+    .card { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #333; display: block; position: relative; }
+    .card img, .card video { height: 400px; width: auto; max-width: 95vw; display: block; object-fit: contain; }
 
-    /* BOTÃO WHATSAPP "FALE CONOSCO" */
+    /* BOTÃO WHATSAPP - Espaço azul reduzido no final */
     .footer-action {
       text-align: center;
-      padding: 30px 0 50px 0; /* Espaço para não grudar no mural */
+      padding: 15px 0 25px 0; /* Espaço otimizado para não ficar gigante */
       background: #001a33;
     }
     .btn-whatsapp {
@@ -43,18 +43,19 @@
       background-color: #25d366;
       color: white;
       text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 30px;
+      padding: 10px 22px;
+      border-radius: 25px;
       font-weight: bold;
-      font-size: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      font-size: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       transition: transform 0.2s;
     }
     .btn-whatsapp:active { transform: scale(0.95); }
     
     @media (max-width: 600px) {
-      .swiper { height: 460px; }
-      .card img, .card video { height: 380px; }
+      .swiper { height: 440px; }
+      .card img, .card video { height: 360px; }
+      .title { font-size: 17px; }
     }
   </style>
 </head>
@@ -81,11 +82,13 @@
         const dados = await res.json();
         if (!dados || dados.length === 0) return;
 
+        // Banner D2
         if (dados[0].capa) {
             document.getElementById("banner-topo").innerHTML = `<img src="${dados[0].capa}">`;
             document.getElementById("banner-topo").style.display = "block";
         }
 
+        // Vídeos e Imagens
         document.getElementById("track").innerHTML = dados.map(item => {
           if(!item.arquivo) return '';
           const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
