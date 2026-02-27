@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    body, html { margin: 0; padding: 0; background: transparent; overflow: hidden; font-family: sans-serif; }
+    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 12px 0; border-bottom: 3px solid #ffcc00; margin-bottom: 15px; }
+    .title { font-weight: bold; font-size: 18px; text-transform: uppercase; margin: 0; }
+    .drag-instruction { font-size: 14px; color: #ffffff; margin-top: 6px; letter-spacing: 2px; font-weight: bold; display: block; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    .swiper { width: 100%; height: 420px; }
+    .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
+    .card { position: relative; border-radius: 15px; overflow: hidden; background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.5); border: 1px solid #333; text-decoration: none; display: block; }
+    img { height: 370px; width: auto; display: block; object-fit: contain; }
+    .link-indicator { position: absolute; bottom: 20px; right: 15px; background: #ffcc00; color: #001a33; padding: 10px 18px; border-radius: 10px; font-size: 14px; font-weight: 900; z-index: 10; text-transform: uppercase; }
+  </style>
+</head>
+<body>
 
+  <div class="header-container">
+    <div class="title">Nossos Patrocinadores</div>
+    <div class="drag-instruction">&lt; ARRASTE PARA VER MAIS &gt;</div>
+  </div>
+
+  <div class="swiper">
+    <div class="swiper-wrapper" id="track">
+      <div class="swiper-slide"><p style="color:white; padding:20px;">Carregando parceiros...</p></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const apiURL = "https://script.google.com/macros/s/AKfycbxVzles8_nSclegwehGob4FzQo7S07-N3tMdeM-svNSMY8eC1LKctLrVT0wJ56halN6/exec";
+
+    async function carregar() {
+      try {
+        const res = await fetch(apiURL);
+        const dados = await res.json();
+        const track = document.getElementById("track");
+        
+        if (!dados || dados.length === 0) {
+          track.innerHTML = "<p style='color:white;'>Sem patrocinadores ativos.</p>";
+          return;
+        }
+
+        track.innerHTML = dados.map(item => {
+          const temLink = item.link && item.link !== "#" && item.link.trim() !== "";
+          return `
+            <div class="swiper-slide">
+              <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_top" class="card">
+                <img src="${item.arquivo}" alt="${item.empresa}">
+                ${temLink ? `<div class="link-indicator">📞 CONTATO</div>` : ''}
+              </a>
+            </div>`;
+        }).join('');
+
+        new Swiper('.swiper', {
+          slidesPerView: 'auto',
+          spaceBetween: 25,
+          centeredSlides: true,
+          loop: dados.length > 1,
+          grabCursor: true
+        });
+      } catch (e) {
+        console.error(e);
+        document.getElementById("track").innerHTML = "<p style='color:white;'>Erro ao carregar patrocinadores.</p>";
+      }
+    }
+    carregar();
+  </script>
+</body>
+</html>
