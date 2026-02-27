@@ -5,35 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
-    /* Trava absoluta: impede a página de subir ou descer */
     body, html { 
       margin: 0; padding: 0; 
-      height: 100%; width: 100%;
+      width: 100%;
       background: #001a33; 
-      overflow: hidden; 
-      position: fixed; /* Força a fixação no topo */
+      overflow-x: hidden; /* Permite rolar apenas para baixo se necessário */
       font-family: sans-serif;
-      touch-action: pan-x; /* Só permite mover para os lados */
     }
     
-    /* Espaçamentos do Banner */
+    /* Banner GIF */
     #banner-topo { 
       width: 100%; display: none; 
       padding-top: 20px; 
-      padding-bottom: 30px; /* Aumentei o pulo de linha */
+      padding-bottom: 30px; 
       text-align: center;
     }
-    #banner-topo img { width: 90%; height: auto; border-radius: 10px; }
+    #banner-topo img { width: 90%; max-width: 600px; height: auto; border-radius: 10px; }
 
-    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 15px 0; border-bottom: 2px solid #ffcc00; }
-    .title { font-weight: bold; font-size: 18px; text-transform: uppercase; margin: 0; }
+    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 15px 0; border-bottom: 3px solid #ffcc00; }
+    .title { font-weight: bold; font-size: 22px; text-transform: uppercase; margin: 0; }
     
-    /* Swiper */
-    .swiper { width: 100%; height: 500px; background: #001a33; }
+    /* Swiper - Altura dinâmica */
+    .swiper { width: 100%; height: 550px; background: #001a33; margin-bottom: 50px; }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
     .card { border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #333; display: block; position: relative; }
-    .card img, .card video { height: 400px; width: auto; max-width: 90vw; display: block; object-fit: contain; }
+    
+    /* No computador o vídeo é um pouco menor para caber na tela, no celular ele se ajusta */
+    .card img, .card video { 
+      height: 450px; 
+      width: auto; 
+      max-width: 95vw; 
+      display: block; 
+      object-fit: contain; 
+    }
+
+    @media (max-width: 600px) {
+      .swiper { height: 500px; }
+      .card img, .card video { height: 400px; }
+      .title { font-size: 18px; }
+    }
   </style>
 </head>
 <body>
@@ -57,16 +68,24 @@
         }
 
         document.getElementById("track").innerHTML = dados.map(item => {
-          if(!item.arquivo) return '';
+          if(!item.arquivo || !item.arquivo.includes("http")) return '';
           const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
           return `<div class="swiper-slide">
-            <a href="${item.link || '#'}" target="_top" class="card">
-              ${isVideo ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` : `<img src="${item.arquivo}">`}
+            <a href="${item.link && item.link.length > 5 ? item.link : 'javascript:void(0)'}" target="_top" class="card">
+              ${isVideo 
+                ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
+                : `<img src="${item.arquivo}">`}
             </a>
           </div>`;
         }).join('');
 
-        new Swiper('.swiper', { slidesPerView: 'auto', spaceBetween: 20, centeredSlides: true, loop: true });
+        new Swiper('.swiper', { 
+            slidesPerView: 'auto', 
+            spaceBetween: 25, 
+            centeredSlides: true, 
+            loop: dados.length > 1,
+            grabCursor: true 
+        });
       } catch (e) { console.error(e); }
     }
     carregar();
