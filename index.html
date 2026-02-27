@@ -5,25 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
-    body, html { margin: 0; padding: 0; background: transparent; overflow-x: hidden; font-family: sans-serif; }
+    /* Reset total para evitar flutuação */
+    body, html { 
+      margin: 0; 
+      padding: 0; 
+      background: #001a33; /* Fundo escuro para combinar com o rádio */
+      overflow: hidden; 
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
     
-    /* Banner do GIF da D2 */
-    #banner-topo { width: 100%; display: none; line-height: 0; }
-    #banner-topo img { width: 100%; height: auto; display: block; border-radius: 12px 12px 0 0; }
+    /* Container do Banner (D2) */
+    #banner-topo { 
+      width: 100%; 
+      display: none; 
+      line-height: 0; 
+      background: #000;
+    }
+    #banner-topo img { 
+      width: 100%; 
+      height: auto; 
+      display: block; 
+    }
 
-    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 12px 0; border-bottom: 3px solid #ffcc00; }
-    .title { font-weight: bold; font-size: 18px; text-transform: uppercase; margin: 0; }
-    .drag-instruction { font-size: 12px; color: #ffffff; margin-top: 4px; letter-spacing: 2px; font-weight: bold; display: block; animation: pulse 2s infinite; }
+    /* Cabeçalho */
+    .header-container { 
+      background: #001a33; 
+      color: #ffcc00; 
+      text-align: center; 
+      padding: 15px 0; 
+      border-bottom: 3px solid #ffcc00; 
+    }
+    .title { font-weight: bold; font-size: 20px; text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+    .drag-instruction { font-size: 12px; color: #ffffff; margin-top: 5px; letter-spacing: 2px; font-weight: bold; animation: pulse 2s infinite; }
     
     @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
     
-    .swiper { width: 100%; height: 420px; padding-top: 20px; background: #001a33; border-radius: 0 0 12px 12px; }
+    /* Área do Carrossel - Aumentada para não cortar */
+    .swiper { 
+      width: 100%; 
+      height: 520px; /* Espaço generoso para o card + sombra */
+      padding-top: 25px; 
+      background: #001a33; 
+    }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
-    .card { position: relative; border-radius: 15px; overflow: hidden; background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.5); border: 1px solid #333; text-decoration: none; display: block; }
-    .card img, .card video { height: 350px; width: auto; display: block; object-fit: contain; }
+    /* Card dos Patrocinadores */
+    .card { 
+      position: relative; 
+      border-radius: 15px; 
+      overflow: hidden; 
+      background: #000; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
+      border: 1px solid #333; 
+      text-decoration: none; 
+      display: block;
+      transition: transform 0.3s;
+    }
     
-    .link-indicator { position: absolute; bottom: 15px; right: 10px; background: #ffcc00; color: #001a33; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 900; z-index: 10; }
+    /* Ajuste de altura das imagens dos patrocinadores */
+    .card img, .card video { 
+      height: 420px; /* Aumentado para 420px */
+      width: auto; 
+      display: block; 
+      object-fit: contain; 
+    }
+    
+    .link-indicator { 
+      position: absolute; 
+      bottom: 20px; 
+      right: 15px; 
+      background: #ffcc00; 
+      color: #001a33; 
+      padding: 10px 18px; 
+      border-radius: 10px; 
+      font-size: 13px; 
+      font-weight: 900; 
+      z-index: 10; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 <body>
@@ -32,63 +91,4 @@
 
   <div class="header-container">
     <div class="title">Nossos Patrocinadores</div>
-    <div class="drag-instruction">&lt; ARRASTE PARA VER &gt;</div>
-  </div>
-
-  <div class="swiper">
-    <div class="swiper-wrapper" id="track"></div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    // URL ATUALIZADA
-    const apiURL = "https://script.google.com/macros/s/AKfycbwgmjndCmGS7GP3mv9IwJ5BpaMnobXKyrZfyV5JwkmZqsdKuPnQ1yxYPOyWsrK6F2NG/exec";
-
-    async function carregar() {
-      try {
-        const res = await fetch(apiURL);
-        const dados = await res.json();
-        const track = document.getElementById("track");
-        const bannerDiv = document.getElementById("banner-topo");
-        
-        if (!dados || dados.length === 0) return;
-
-        // Puxa o banner da D2 (capa do primeiro item)
-        if (dados[0].capa && dados[0].capa.trim() !== "") {
-            bannerDiv.innerHTML = `<img src="${dados[0].capa}" alt="Anuncie Aqui">`;
-            bannerDiv.style.display = "block";
-        }
-
-        track.innerHTML = dados.map(item => {
-          if(!item.arquivo) return '';
-          const temLink = item.link && item.link.length > 5;
-          const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
-          
-          const midia = isVideo 
-            ? `<video src="${item.arquivo}" autoplay muted loop playsinline></video>`
-            : `<img src="${item.arquivo}" alt="Patrocinador">`;
-
-          return `
-            <div class="swiper-slide">
-              <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_top" class="card">
-                ${midia}
-                ${temLink ? `<div class="link-indicator">📞 CONTATO</div>` : ''}
-              </a>
-            </div>`;
-        }).join('');
-
-        new Swiper('.swiper', {
-          slidesPerView: 'auto',
-          spaceBetween: 25,
-          centeredSlides: true,
-          loop: dados.length > 1,
-          grabCursor: true
-        });
-      } catch (e) {
-        console.error("Erro:", e);
-      }
-    }
-    carregar();
-  </script>
-</body>
-</html>
+    <div class="drag-instruction">&lt; ARRASTE PARA
