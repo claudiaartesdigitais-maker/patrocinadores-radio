@@ -9,67 +9,72 @@
       margin: 0; 
       padding: 0; 
       background: transparent; 
-      overflow: hidden; 
-      font-family: sans-serif;
+      overflow-x: hidden; 
+      font-family: sans-serif; 
     }
     
-    /* Container do Banner com espaço no topo (pular linha) */
+    /* Espaço e Banner GIF (D2) */
     #banner-topo { 
       width: 100%; 
       display: none; 
-      line-height: 0; 
-      margin-top: 20px; /* Aqui pula a linha antes do banner */
+      margin-top: 15px;    
+      margin-bottom: 25px; /* Pula linha antes do título */
+      text-align: center;
     }
-    #banner-topo img { width: 100%; height: auto; display: block; border-radius: 10px 10px 0 0; }
+    #banner-topo img { 
+      width: 92%; 
+      height: auto; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+    }
 
-    /* Cabeçalho Ajustado */
+    /* Barra de Título */
     .header-container { 
       background: #001a33; 
       color: #ffcc00; 
       text-align: center; 
-      padding: 10px 0; 
+      padding: 12px 0; 
       border-bottom: 2px solid #ffcc00; 
     }
-    .title { font-weight: bold; font-size: 16px; text-transform: uppercase; margin: 0; }
-    .drag-instruction { font-size: 10px; color: #ffffff; margin-top: 2px; letter-spacing: 1px; font-weight: bold; animation: pulse 2s infinite; }
+    .title { font-weight: bold; font-size: 18px; text-transform: uppercase; margin: 0; }
     
-    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-    
-    /* Área do Carrossel */
+    /* Área dos Patrocinadores */
     .swiper { 
       width: 100%; 
-      height: 380px; 
-      padding-top: 15px; 
+      height: auto; 
+      padding: 20px 0 50px 0; 
       background: #001a33; 
-      border-radius: 0 0 10px 10px;
     }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
     .card { 
-      border-radius: 10px; 
+      border-radius: 15px; 
       overflow: hidden; 
       background: #000; 
       border: 1px solid #333; 
       text-decoration: none; 
-      display: block;
+      display: block; 
+      position: relative; 
     }
     
+    /* Altura dos logos/vídeos */
     .card img, .card video { 
-      height: 320px; 
+      height: 380px; 
       width: auto; 
+      max-width: 90vw; 
       display: block; 
       object-fit: contain; 
     }
     
     .link-indicator { 
       position: absolute; 
-      bottom: 10px; 
-      right: 10px; 
+      bottom: 15px; 
+      right: 15px; 
       background: #ffcc00; 
       color: #001a33; 
-      padding: 5px 10px; 
-      border-radius: 5px; 
-      font-size: 11px; 
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      font-size: 12px; 
       font-weight: 900; 
       z-index: 10; 
     }
@@ -81,7 +86,6 @@
 
   <div class="header-container">
     <div class="title">Patrocinadores</div>
-    <div class="drag-instruction">&lt; ARRASTE PARA VER &gt;</div>
   </div>
 
   <div class="swiper">
@@ -101,18 +105,24 @@
         
         if (!dados || dados.length === 0) return;
 
-        if (dados[0].capa && dados[0].capa.trim() !== "") {
-            bannerDiv.innerHTML = `<img src="${dados[0].capa}" alt="Banner">`;
+        // Banner Superior
+        if (dados[0].capa && dados[0].capa.includes("http")) {
+            bannerDiv.innerHTML = `<img src="${dados[0].capa}" alt="Publicidade">`;
             bannerDiv.style.display = "block";
         }
 
+        // Lista de Patrocinadores
         track.innerHTML = dados.map(item => {
           if(!item.arquivo || !item.arquivo.includes("http")) return '';
-          const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
+          
+          const isVideo = /\.(mp4|webm|mov|ogg)$/i.test(item.arquivo);
+          
           return `
             <div class="swiper-slide">
               <a href="${item.link && item.link.length > 5 ? item.link : 'javascript:void(0)'}" target="_top" class="card">
-                ${isVideo ? `<video src="${item.arquivo}" autoplay muted loop playsinline></video>` : `<img src="${item.arquivo}">`}
+                ${isVideo 
+                  ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
+                  : `<img src="${item.arquivo}">`}
                 ${item.link && item.link.length > 5 ? `<div class="link-indicator">📞 CONTATO</div>` : ''}
               </a>
             </div>`;
@@ -120,7 +130,7 @@
 
         new Swiper('.swiper', {
           slidesPerView: 'auto',
-          spaceBetween: 20,
+          spaceBetween: 25,
           centeredSlides: true,
           loop: dados.length > 1,
           grabCursor: true
