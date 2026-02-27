@@ -2,139 +2,68 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
+    /* Trava o fundo para não flutuar */
     body, html { 
-      margin: 0; 
-      padding: 0; 
-      background: transparent; 
-      overflow-x: hidden; 
-      font-family: sans-serif; 
+      margin: 0; padding: 0; 
+      height: 100%; width: 100%;
+      background: #001a33; 
+      overflow: hidden; /* Proíbe rolar para cima/baixo */
+      font-family: sans-serif;
+      touch-action: none; /* Ajuda a não flutuar no mobile */
     }
     
-    /* Espaço e Banner GIF (D2) */
     #banner-topo { 
-      width: 100%; 
-      display: none; 
-      margin-top: 15px;    
-      margin-bottom: 25px; /* Pula linha antes do título */
+      width: 100%; display: none; 
+      padding-top: 15px; 
+      padding-bottom: 25px; /* O pulo de linha */
       text-align: center;
     }
-    #banner-topo img { 
-      width: 92%; 
-      height: auto; 
-      border-radius: 10px; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-    }
+    #banner-topo img { width: 92%; height: auto; border-radius: 10px; }
 
-    /* Barra de Título */
-    .header-container { 
-      background: #001a33; 
-      color: #ffcc00; 
-      text-align: center; 
-      padding: 12px 0; 
-      border-bottom: 2px solid #ffcc00; 
-    }
+    .header-container { background: #001a33; color: #ffcc00; text-align: center; padding: 12px 0; border-bottom: 2px solid #ffcc00; }
     .title { font-weight: bold; font-size: 18px; text-transform: uppercase; margin: 0; }
     
-    /* Área dos Patrocinadores */
-    .swiper { 
-      width: 100%; 
-      height: auto; 
-      padding: 20px 0 50px 0; 
-      background: #001a33; 
-    }
+    /* Swiper com toque liberado */
+    .swiper { width: 100%; height: 500px; background: #001a33; touch-action: pan-x; }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
-    .card { 
-      border-radius: 15px; 
-      overflow: hidden; 
-      background: #000; 
-      border: 1px solid #333; 
-      text-decoration: none; 
-      display: block; 
-      position: relative; 
-    }
-    
-    /* Altura dos logos/vídeos */
-    .card img, .card video { 
-      height: 380px; 
-      width: auto; 
-      max-width: 90vw; 
-      display: block; 
-      object-fit: contain; 
-    }
-    
-    .link-indicator { 
-      position: absolute; 
-      bottom: 15px; 
-      right: 15px; 
-      background: #ffcc00; 
-      color: #001a33; 
-      padding: 8px 12px; 
-      border-radius: 8px; 
-      font-size: 12px; 
-      font-weight: 900; 
-      z-index: 10; 
-    }
+    .card { border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #333; display: block; position: relative; }
+    .card img, .card video { height: 400px; width: auto; max-width: 90vw; display: block; object-fit: contain; }
   </style>
 </head>
 <body>
-
   <div id="banner-topo"></div>
-
-  <div class="header-container">
-    <div class="title">Patrocinadores</div>
-  </div>
-
-  <div class="swiper">
-    <div class="swiper-wrapper" id="track"></div>
-  </div>
+  <div class="header-container"><div class="title">Patrocinadores</div></div>
+  <div class="swiper"><div class="swiper-wrapper" id="track"></div></div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const apiURL = "https://script.google.com/macros/s/AKfycbwgmjndCmGS7GP3mv9IwJ5BpaMnobXKyrZfyV5JwkmZqsdKuPnQ1yxYPOyWsrK6F2NG/exec";
-
     async function carregar() {
       try {
         const res = await fetch(apiURL);
         const dados = await res.json();
-        const track = document.getElementById("track");
-        const bannerDiv = document.getElementById("banner-topo");
-        
         if (!dados || dados.length === 0) return;
 
-        // Banner Superior
-        if (dados[0].capa && dados[0].capa.includes("http")) {
-            bannerDiv.innerHTML = `<img src="${dados[0].capa}" alt="Publicidade">`;
-            bannerDiv.style.display = "block";
+        if (dados[0].capa) {
+            document.getElementById("banner-topo").innerHTML = `<img src="${dados[0].capa}">`;
+            document.getElementById("banner-topo").style.display = "block";
         }
 
-        // Lista de Patrocinadores
-        track.innerHTML = dados.map(item => {
-          if(!item.arquivo || !item.arquivo.includes("http")) return '';
-          
-          const isVideo = /\.(mp4|webm|mov|ogg)$/i.test(item.arquivo);
-          
-          return `
-            <div class="swiper-slide">
-              <a href="${item.link && item.link.length > 5 ? item.link : 'javascript:void(0)'}" target="_top" class="card">
-                ${isVideo 
-                  ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
-                  : `<img src="${item.arquivo}">`}
-                ${item.link && item.link.length > 5 ? `<div class="link-indicator">📞 CONTATO</div>` : ''}
-              </a>
-            </div>`;
+        document.getElementById("track").innerHTML = dados.map(item => {
+          if(!item.arquivo) return '';
+          const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
+          return `<div class="swiper-slide">
+            <a href="${item.link || '#'}" target="_top" class="card">
+              ${isVideo ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` : `<img src="${item.arquivo}">`}
+            </a>
+          </div>`;
         }).join('');
 
-        new Swiper('.swiper', {
-          slidesPerView: 'auto',
-          spaceBetween: 25,
-          centeredSlides: true,
-          loop: dados.length > 1,
-          grabCursor: true
-        });
+        new Swiper('.swiper', { slidesPerView: 'auto', spaceBetween: 20, centeredSlides: true, loop: true });
       } catch (e) { console.error(e); }
     }
     carregar();
