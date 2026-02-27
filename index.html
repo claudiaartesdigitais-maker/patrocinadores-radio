@@ -26,13 +26,14 @@
 
   <div class="swiper">
     <div class="swiper-wrapper" id="track">
-      <div class="swiper-slide"><p style="color:white; padding:20px;">Carregando parceiros...</p></div>
+      <div class="swiper-slide"><p style="color:white; padding:20px;">Carregando...</p></div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const apiURL = "https://script.google.com/macros/s/AKfycbxVzles8_nSclegwehGob4FzQo7S07-N3tMdeM-svNSMY8eC1LKctLrVT0wJ56halN6/exec";
+    // SEU LINK NOVO QUE FUNCIONA:
+    const apiURL = "https://script.google.com/macros/s/AKfycbzvaGn6PQPMhXkOkT01fAnKmyzcb_8Mt890eu3aoDuyMYbhu06SOj_vEUP9K9OUhPO5/exec";
 
     async function carregar() {
       try {
@@ -41,7 +42,7 @@
         const track = document.getElementById("track");
         
         if (!dados || dados.length === 0) {
-          track.innerHTML = "<p style='color:white;'>Sem patrocinadores ativos.</p>";
+          track.innerHTML = "<p style='color:white;'>Nenhum patrocinador encontrado.</p>";
           return;
         }
 
@@ -65,7 +66,7 @@
         });
       } catch (e) {
         console.error(e);
-        document.getElementById("track").innerHTML = "<p style='color:white;'>Erro ao carregar patrocinadores.</p>";
+        document.getElementById("track").innerHTML = "<p style='color:white;'>Erro de conexão.</p>";
       }
     }
     carregar();
