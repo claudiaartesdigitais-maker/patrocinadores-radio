@@ -1,73 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
+    /* FUNDO BRANCO TOTAL */
     body, html { 
       margin: 0; padding: 0; 
       width: 100%;
-      background: #001a33; 
+      background: #ffffff; 
       overflow-x: hidden;
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     
-    /* Espaçamentos do Banner Superior */
+    /* Banner Superior */
     #banner-topo { 
       width: 100%; display: none; 
-      padding-top: 15px; 
-      padding-bottom: 20px; 
+      padding: 15px 0 5px 0; 
       text-align: center;
     }
-    #banner-topo img { width: 90%; max-width: 600px; height: auto; border-radius: 10px; }
-
-    /* Linha Dourada Divisora */
-    .header-line { 
-      width: 100%; 
-      height: 2px; 
-      background: #ffcc00; 
-      margin-top: 5px;
+    #banner-topo img { 
+      width: 92%; 
+      max-width: 600px; 
+      height: auto; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     
-    /* Swiper (Carrossel) */
-    .swiper { width: 100%; height: 480px; background: #001a33; margin-top: 15px; }
+    /* Swiper (Carrossel) Manual */
+    .swiper { 
+      width: 100%; 
+      height: 480px; 
+      background: #ffffff; 
+      margin-top: 10px; 
+    }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
-    .card { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #333; display: block; position: relative; }
-    .card img, .card video { height: 400px; width: auto; max-width: 95vw; display: block; object-fit: contain; }
+    /* Card dos Patrocinadores - Estilo Clean */
+    .card { 
+      border-radius: 15px; 
+      overflow: hidden; 
+      background: #ffffff; 
+      border: 1px solid #f0f0f0; 
+      display: block; 
+      position: relative; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    }
+    .card img, .card video { 
+      height: 400px; 
+      width: auto; 
+      max-width: 95vw; 
+      display: block; 
+      object-fit: contain; 
+      background: #ffffff;
+    }
 
-    /* ETIQUETA DE CONTATO (Lê o link da planilha) */
+    /* Etiqueta de Contato */
     .link-indicator { 
       position: absolute; 
       bottom: 15px; 
       right: 15px; 
-      background: #ffcc00; 
-      color: #001a33; 
-      padding: 8px 12px; 
-      border-radius: 8px; 
-      font-size: 12px; 
-      font-weight: 900; 
+      background: #25d366; 
+      color: #ffffff; 
+      padding: 8px 14px; 
+      border-radius: 30px; 
+      font-size: 11px; 
+      font-weight: bold; 
       z-index: 10;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-transform: uppercase;
     }
 
-    /* Seção do Botão de WhatsApp Geral */
+    /* Rodapé */
     .footer-action {
       text-align: center;
-      padding: 15px 0 10px 0;
-      background: #001a33;
+      padding: 10px 0 20px 0;
+      background: #ffffff;
     }
     .btn-whatsapp {
       display: inline-block;
       background-color: #25d366;
       color: white;
       text-decoration: none;
-      padding: 10px 22px;
-      border-radius: 25px;
+      padding: 12px 28px;
+      border-radius: 30px;
       font-weight: bold;
-      font-size: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+      text-transform: uppercase;
     }
     
     @media (max-width: 600px) {
@@ -79,7 +100,6 @@
 <body>
 
   <div id="banner-topo"></div>
-  <div class="header-line"></div>
   
   <div class="swiper">
     <div class="swiper-wrapper" id="track"></div>
@@ -87,7 +107,7 @@
 
   <div class="footer-action">
     <a href="https://wa.me/5511997695479" target="_blank" class="btn-whatsapp">
-       📱 FALE CONOSCO (SEJA PATROCINADOR)
+       📱 SEJA UM PATROCINADOR
     </a>
   </div>
 
@@ -113,21 +133,22 @@
           
           return `
             <div class="swiper-slide">
-              <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_top" class="card">
+              <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_blank" class="card">
                 ${isVideo 
                   ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
                   : `<img src="${item.arquivo}">`}
-                ${temLink ? `<div class="link-indicator">📞 CONTATO</div>` : ''}
+                ${temLink ? `<div class="link-indicator">💬 FALAR AGORA</div>` : ''}
               </a>
             </div>`;
         }).join('');
 
+        // SWIPER APENAS MANUAL (Sem Autoplay)
         new Swiper('.swiper', { 
           slidesPerView: 'auto', 
-          spaceBetween: 20, 
+          spaceBetween: 25, 
           centeredSlides: true, 
           loop: dados.length > 1,
-          grabCursor: true 
+          grabCursor: true
         });
       } catch (e) { console.error("Erro:", e); }
     }
