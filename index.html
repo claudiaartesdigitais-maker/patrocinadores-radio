@@ -27,13 +27,30 @@
       border-radius: 12px; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
+
+    /* INDICADOR DE ARRASTAR */
+    .arrasta-indicador {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 15px;
+      letter-spacing: 1px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateX(0);}
+      40% {transform: translateX(5px);}
+      60% {transform: translateX(3px);}
+    }
     
     /* Swiper (Carrossel) Manual */
     .swiper { 
       width: 100%; 
       height: 480px; 
       background: #ffffff; 
-      margin-top: 10px; 
+      margin-top: 5px; 
     }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
@@ -90,6 +107,26 @@
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
       text-transform: uppercase;
     }
+
+    /* BOTÃO DE SOM FIXO */
+    #btn-audio-fixo {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+      background: #4a148c;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     
     @media (max-width: 600px) {
       .swiper { height: 430px; }
@@ -99,7 +136,19 @@
 </head>
 <body>
 
+  <audio id="player-radio" preload="auto">
+    <source src="LINK_DA_SUA_RADIO_AQUI" type="audio/mpeg">
+  </audio>
+
+  <button id="btn-audio-fixo" onclick="toggleSom()">
+    <span id="icone-som">🔊</span> <span id="texto-som">OUVIR RÁDIO</span>
+  </button>
+
   <div id="banner-topo"></div>
+
+  <div class="arrasta-indicador">
+     ARRASTA PARA O LADO ➔
+  </div>
   
   <div class="swiper">
     <div class="swiper-wrapper" id="track"></div>
@@ -107,7 +156,7 @@
 
   <div class="footer-action">
     <a href="https://wa.me/5511997695479" target="_blank" class="btn-whatsapp">
-       📱 SEJA UM PATROCINADOR
+        📱 SEJA UM PATROCINADOR
     </a>
   </div>
 
@@ -115,6 +164,24 @@
   <script>
     const apiURL = "https://script.google.com/macros/s/AKfycbwgmjndCmGS7GP3mv9IwJ5BpaMnobXKyrZfyV5JwkmZqsdKuPnQ1yxYPOyWsrK6F2NG/exec";
     
+    function toggleSom() {
+      const audio = document.getElementById("player-radio");
+      const texto = document.getElementById("texto-som");
+      const icone = document.getElementById("icone-som");
+
+      if (audio.paused) {
+        audio.play();
+        texto.innerText = "PARAR RÁDIO";
+        icone.innerText = "⏸️";
+        document.getElementById("btn-audio-fixo").style.background = "#ff0000";
+      } else {
+        audio.pause();
+        texto.innerText = "OUVIR RÁDIO";
+        icone.innerText = "🔊";
+        document.getElementById("btn-audio-fixo").style.background = "#4a148c";
+      }
+    }
+
     async function carregar() {
       try {
         const res = await fetch(apiURL);
@@ -137,12 +204,11 @@
                 ${isVideo 
                   ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
                   : `<img src="${item.arquivo}">`}
-                ${temLink ? `<div class="link-indicator">💬 FALAR AGORA</div>` : ''}
+                ${temLink ? `<div class="link-indicator">💬 CONTATO</div>` : ''}
               </a>
             </div>`;
         }).join('');
 
-        // SWIPER APENAS MANUAL (Sem Autoplay)
         new Swiper('.swiper', { 
           slidesPerView: 'auto', 
           spaceBetween: 25, 
