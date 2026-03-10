@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
+    /* FUNDO BRANCO TOTAL */
     body, html { 
       margin: 0; padding: 0; 
       width: 100%;
@@ -13,6 +14,7 @@
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     
+    /* Banner Superior */
     #banner-topo { 
       width: 100%; display: none; 
       padding: 15px 0 5px 0; 
@@ -25,7 +27,8 @@
       border-radius: 12px; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-
+    
+    /* Indicador */
     .arrasta-indicador {
       text-align: center;
       color: #888;
@@ -35,21 +38,22 @@
       letter-spacing: 1px;
       animation: bounce 2s infinite;
     }
-
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% {transform: translateX(0);}
       40% {transform: translateX(5px);}
       60% {transform: translateX(3px);}
     }
-    
+
+    /* Swiper (Carrossel) */
     .swiper { 
       width: 100%; 
       height: 480px; 
       background: #ffffff; 
-      margin-top: 5px; 
+      margin-top: 10px; 
     }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
+    /* Card dos Patrocinadores */
     .card { 
       border-radius: 15px; 
       overflow: hidden; 
@@ -58,7 +62,6 @@
       display: block; 
       position: relative; 
       box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      cursor: pointer;
     }
     .card img, .card video { 
       height: 400px; 
@@ -69,19 +72,7 @@
       background: #ffffff;
     }
 
-    /* Ícone de Som no Canto do Vídeo */
-    .audio-control {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 8px;
-      border-radius: 50%;
-      font-size: 14px;
-      z-index: 20;
-    }
-
+    /* Etiqueta de Contato */
     .link-indicator { 
       position: absolute; 
       bottom: 15px; 
@@ -95,6 +86,7 @@
       z-index: 10;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-transform: uppercase;
+      text-decoration: none;
     }
 
     .footer-action {
@@ -124,11 +116,9 @@
 <body>
 
   <div id="banner-topo"></div>
-
-  <div class="arrasta-indicador">
-     ARRASTA PARA O LADO ➔
-  </div>
   
+  <div class="arrasta-indicador">ARRASTA PARA O LADO ➔</div>
+
   <div class="swiper">
     <div class="swiper-wrapper" id="track"></div>
   </div>
@@ -143,21 +133,6 @@
   <script>
     const apiURL = "https://script.google.com/macros/s/AKfycbwgmjndCmGS7GP3mv9IwJ5BpaMnobXKyrZfyV5JwkmZqsdKuPnQ1yxYPOyWsrK6F2NG/exec";
     
-    // Função para ligar/desligar o som do vídeo individual
-    function toggleAudio(el) {
-      const video = el.querySelector('video');
-      const icon = el.querySelector('.audio-control');
-      if (video) {
-        if (video.muted) {
-          video.muted = false;
-          if(icon) icon.innerText = "🔊";
-        } else {
-          video.muted = true;
-          if(icon) icon.innerText = "🔇";
-        }
-      }
-    }
-
     async function carregar() {
       try {
         const res = await fetch(apiURL);
@@ -174,24 +149,15 @@
           const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
           const temLink = item.link && item.link.length > 5;
           
-          if (isVideo) {
-            return `
-              <div class="swiper-slide">
-                <div class="card" onclick="toggleAudio(this)">
-                  <div class="audio-control">🔇</div>
-                  <video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-                  ${temLink ? `<a href="${item.link}" target="_blank" class="link-indicator">💬 CONTATO</a>` : ''}
-                </div>
-              </div>`;
-          } else {
-            return `
-              <div class="swiper-slide">
-                <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_blank" class="card">
-                  <img src="${item.arquivo}">
-                  ${temLink ? `<div class="link-indicator">💬 CONTATO</div>` : ''}
-                </a>
-              </div>`;
-          }
+          return `
+            <div class="swiper-slide">
+              <div class="card">
+                ${isVideo 
+                  ? `<video src="${item.arquivo}" controls playsinline></video>` 
+                  : `<img src="${item.arquivo}">`}
+                ${temLink ? `<a href="${item.link}" target="_blank" class="link-indicator">💬 CONTATO</a>` : ''}
+              </div>
+            </div>`;
         }).join('');
 
         new Swiper('.swiper', { 
