@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
-    /* FUNDO BRANCO TOTAL */
     body, html { 
       margin: 0; padding: 0; 
       width: 100%;
@@ -14,7 +13,6 @@
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     
-    /* Banner Superior */
     #banner-topo { 
       width: 100%; display: none; 
       padding: 15px 0 5px 0; 
@@ -28,11 +26,10 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
-    /* INDICADOR DE ARRASTAR */
     .arrasta-indicador {
       text-align: center;
       color: #888;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       margin-top: 15px;
       letter-spacing: 1px;
@@ -45,7 +42,6 @@
       60% {transform: translateX(3px);}
     }
     
-    /* Swiper (Carrossel) Manual */
     .swiper { 
       width: 100%; 
       height: 480px; 
@@ -54,7 +50,6 @@
     }
     .swiper-slide { display: flex; justify-content: center; align-items: center; width: auto; }
     
-    /* Card dos Patrocinadores - Estilo Clean */
     .card { 
       border-radius: 15px; 
       overflow: hidden; 
@@ -63,6 +58,7 @@
       display: block; 
       position: relative; 
       box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      cursor: pointer;
     }
     .card img, .card video { 
       height: 400px; 
@@ -73,7 +69,19 @@
       background: #ffffff;
     }
 
-    /* Etiqueta de Contato */
+    /* Ícone de Som no Canto do Vídeo */
+    .audio-control {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 8px;
+      border-radius: 50%;
+      font-size: 14px;
+      z-index: 20;
+    }
+
     .link-indicator { 
       position: absolute; 
       bottom: 15px; 
@@ -89,7 +97,6 @@
       text-transform: uppercase;
     }
 
-    /* Rodapé */
     .footer-action {
       text-align: center;
       padding: 10px 0 20px 0;
@@ -107,26 +114,6 @@
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
       text-transform: uppercase;
     }
-
-    /* BOTÃO DE SOM FIXO */
-    #btn-audio-fixo {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 9999;
-      background: #4a148c;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 50px;
-      font-weight: bold;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     
     @media (max-width: 600px) {
       .swiper { height: 430px; }
@@ -135,14 +122,6 @@
   </style>
 </head>
 <body>
-
-  <audio id="player-radio" preload="auto">
-    <source src="LINK_DA_SUA_RADIO_AQUI" type="audio/mpeg">
-  </audio>
-
-  <button id="btn-audio-fixo" onclick="toggleSom()">
-    <span id="icone-som">🔊</span> <span id="texto-som">OUVIR RÁDIO</span>
-  </button>
 
   <div id="banner-topo"></div>
 
@@ -164,21 +143,18 @@
   <script>
     const apiURL = "https://script.google.com/macros/s/AKfycbwgmjndCmGS7GP3mv9IwJ5BpaMnobXKyrZfyV5JwkmZqsdKuPnQ1yxYPOyWsrK6F2NG/exec";
     
-    function toggleSom() {
-      const audio = document.getElementById("player-radio");
-      const texto = document.getElementById("texto-som");
-      const icone = document.getElementById("icone-som");
-
-      if (audio.paused) {
-        audio.play();
-        texto.innerText = "PARAR RÁDIO";
-        icone.innerText = "⏸️";
-        document.getElementById("btn-audio-fixo").style.background = "#ff0000";
-      } else {
-        audio.pause();
-        texto.innerText = "OUVIR RÁDIO";
-        icone.innerText = "🔊";
-        document.getElementById("btn-audio-fixo").style.background = "#4a148c";
+    // Função para ligar/desligar o som do vídeo individual
+    function toggleAudio(el) {
+      const video = el.querySelector('video');
+      const icon = el.querySelector('.audio-control');
+      if (video) {
+        if (video.muted) {
+          video.muted = false;
+          if(icon) icon.innerText = "🔊";
+        } else {
+          video.muted = true;
+          if(icon) icon.innerText = "🔇";
+        }
       }
     }
 
@@ -198,15 +174,24 @@
           const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
           const temLink = item.link && item.link.length > 5;
           
-          return `
-            <div class="swiper-slide">
-              <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_blank" class="card">
-                ${isVideo 
-                  ? `<video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>` 
-                  : `<img src="${item.arquivo}">`}
-                ${temLink ? `<div class="link-indicator">💬 CONTATO</div>` : ''}
-              </a>
-            </div>`;
+          if (isVideo) {
+            return `
+              <div class="swiper-slide">
+                <div class="card" onclick="toggleAudio(this)">
+                  <div class="audio-control">🔇</div>
+                  <video src="${item.arquivo}" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+                  ${temLink ? `<a href="${item.link}" target="_blank" class="link-indicator">💬 CONTATO</a>` : ''}
+                </div>
+              </div>`;
+          } else {
+            return `
+              <div class="swiper-slide">
+                <a href="${temLink ? item.link : 'javascript:void(0)'}" target="_blank" class="card">
+                  <img src="${item.arquivo}">
+                  ${temLink ? `<div class="link-indicator">💬 CONTATO</div>` : ''}
+                </a>
+              </div>`;
+          }
         }).join('');
 
         new Swiper('.swiper', { 
