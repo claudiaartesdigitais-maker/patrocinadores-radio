@@ -6,17 +6,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
     body, html { 
-      margin: 0; padding: 0; 
-      width: 100%;
-      background: #ffffff; 
-      overflow-x: hidden;
+      margin: 0; padding: 0; width: 100%;
+      background: #ffffff; overflow-x: hidden;
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     
     #banner-topo { 
       width: 100%; display: none; 
-      padding: 15px 0 5px 0; 
-      text-align: center;
+      padding: 15px 0 5px 0; text-align: center;
     }
     #banner-topo img { width: 92%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
@@ -45,28 +42,21 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-transform: uppercase; text-decoration: none;
     }
 
-    /* Rodapé Ajustado */
-    .footer-action {
-      text-align: center;
-      padding: 20px;
-      background: #ffffff;
-      color: #000;
+    /* Espaçamento ajustado: reduzido o padding-top abaixo */
+    .footer-action { 
+      text-align: center; 
+      padding: 5px 20px 20px 20px; 
+      background: #ffffff; 
     }
-    .texto-patrocinio {
-      font-size: 14px;
-      margin-bottom: 15px;
-      line-height: 1.4;
-      padding: 0 20px;
+    .texto-patrocinio { 
+      font-size: 14px; 
+      margin-bottom: 15px; 
+      line-height: 1.4; 
+      color: #000; 
     }
     .btn-whatsapp {
-      display: inline-block;
-      background-color: #25d366;
-      color: white;
-      text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 14px;
+      display: inline-block; background-color: #25d366; color: white; text-decoration: none;
+      padding: 12px 28px; border-radius: 30px; font-weight: bold; font-size: 14px;
       box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
     }
     
@@ -79,7 +69,6 @@
 <body>
 
   <div id="banner-topo"></div>
-  
   <div class="arrasta-indicador">ARRASTA PARA O LADO ➔</div>
 
   <div class="swiper">
@@ -88,7 +77,8 @@
 
   <div class="footer-action">
     <div class="texto-patrocinio">
-        Seja um Patrocinador: Escolha um apresentador e divulgue sua empresa na Rádio e TV Nova Cotia.
+        Seja um Patrocinador: Escolha um apresentador e divulgue sua empresa na<br>
+        <span style="font-weight: bold; font-size: 16px;">Rádio e TV Nova Cotia</span>
     </div>
     <a href="https://radiocotiaapresentadores.smallbio.com.br/" target="_blank" class="btn-whatsapp">
         👉 FALAR COM UM APRESENTADOR
@@ -106,32 +96,30 @@
         if (!dados || dados.length === 0) return;
 
         if (dados[0].capa && dados[0].capa.includes("http")) {
-            document.getElementById("banner-topo").innerHTML = `<img src="${dados[0].capa}">`;
-            document.getElementById("banner-topo").style.display = "block";
+            const b = document.getElementById("banner-topo");
+            b.innerHTML = `<img src="${dados[0].capa}">`;
+            b.style.display = "block";
         }
 
         document.getElementById("track").innerHTML = dados.map(item => {
           if(!item.arquivo) return '';
           const isVideo = /\.(mp4|webm|mov)$/i.test(item.arquivo);
           const temLink = item.link && item.link.length > 5;
-          
           return `
             <div class="swiper-slide">
               <div class="card">
-                ${isVideo 
-                  ? `<video src="${item.arquivo}" controls playsinline></video>` 
-                  : `<img src="${item.arquivo}">`}
+                ${isVideo ? `<video src="${item.arquivo}" controls playsinline></video>` : `<img src="${item.arquivo}">`}
                 ${temLink ? `<a href="${item.link}" target="_blank" class="link-indicator">💬 CONTATO</a>` : ''}
               </div>
             </div>`;
         }).join('');
 
         new Swiper('.swiper', { 
-          slidesPerView: 'auto', 
-          spaceBetween: 25, 
-          centeredSlides: true, 
-          loop: dados.length > 1,
-          grabCursor: true
+            slidesPerView: 'auto', 
+            spaceBetween: 25, 
+            centeredSlides: true, 
+            loop: dados.length > 1, 
+            grabCursor: true 
         });
       } catch (e) { console.error("Erro:", e); }
     }
